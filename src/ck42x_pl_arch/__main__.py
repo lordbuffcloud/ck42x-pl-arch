@@ -11,7 +11,7 @@ from ck42x_pl_arch.forge.mission import ForgeRequest, forge_mission
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="ck42x-pl-arch",
+        prog="ck42x",
         description="CK42X Payload Lab Architect — forge Flipper BadUSB mission bundles",
     )
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
