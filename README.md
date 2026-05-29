@@ -2,6 +2,8 @@
 
 **CK42X Payload Lab Architect** — a cross-platform TUI for authorized Flipper Zero training labs.
 
+Source: https://github.com/lordbuffcloud/ck42x-pl-arch
+
 Forge mission bundles:
 
 | Artifact | Use |
