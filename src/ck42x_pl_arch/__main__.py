@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import sys
+from pathlib import Path
 
 from ck42x_pl_arch import __version__
 from ck42x_pl_arch.config import Settings
@@ -24,6 +25,11 @@ def build_parser() -> argparse.ArgumentParser:
     forge.add_argument("--goal", required=True)
     forge.add_argument("--platform", action="append", default=["windows"])
     forge.add_argument("--no-handoff", action="store_true")
+    forge.add_argument("--deploy", action="store_true", help="Flash launch .txt and PAYLOADBAY scripts to Flipper")
+
+    deploy = sub.add_parser("deploy", help="Flash a forged mission bundle to Flipper")
+    deploy.add_argument("--slug", help="Mission slug under output dir (default: last forged)")
+    deploy.add_argument("--bundle", type=str, help="Path to mission bundle directory")
     return p
 
 
@@ -47,13 +53,37 @@ def main(argv: list[str] | None = None) -> int:
                     goal=args.goal,
                     platforms=args.platform,
                     handoff=not args.no_handoff,
+                    deploy=args.deploy,
                 ),
             )
         )
         print(result.bundle_dir)
         for f in result.files:
             print(f"  {f}")
-        return 0
+        for line in result.deploy_logs:
+            print(line)
+        return 0 if not args.deploy or result.deploy_ok else 1
+
+    if cmd == "deploy":
+        settings = Settings.load()
+        bundle: Path | None = None
+        if args.bundle:
+            bundle = Path(args.bundle).expanduser()
+        else:
+            slug = args.slug or settings.last_slug
+            if not slug:
+                print("error: pass --slug or --bundle, or forge a mission first", file=sys.stderr)
+                return 1
+            bundle = settings.output_path / slug
+        if not bundle.is_dir():
+            print(f"error: bundle not found: {bundle}", file=sys.stderr)
+            return 1
+        from ck42x_pl_arch.flipper.deploy import deploy_mission_bundle
+
+        out = deploy_mission_bundle(settings, bundle, slug=args.slug or settings.last_slug)
+        for line in out.logs:
+            print(line)
+        return 0 if out.ok else 1
 
     return 1
 

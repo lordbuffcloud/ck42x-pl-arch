@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -18,6 +18,7 @@ class ForgeRequest:
     goal: str
     platforms: list[str]
     handoff: bool = True
+    deploy: bool = False
 
 
 @dataclass
@@ -27,6 +28,8 @@ class ForgeResult:
     files: list[str]
     risk: str
     notes: list[str]
+    deploy_logs: list[str] = field(default_factory=list)
+    deploy_ok: bool = False
 
 
 def slugify(text: str) -> str:
@@ -128,4 +131,13 @@ async def forge_mission(settings: Settings, request: ForgeRequest) -> ForgeResul
     settings.last_slug = slug
     settings.save()
 
-    return ForgeResult(slug=slug, bundle_dir=bundle_dir, files=written, risk=risk, notes=notes)
+    result = ForgeResult(slug=slug, bundle_dir=bundle_dir, files=written, risk=risk, notes=notes)
+
+    if request.deploy:
+        from ck42x_pl_arch.flipper.deploy import deploy_mission_bundle
+
+        deploy_out = deploy_mission_bundle(settings, bundle_dir, slug=slug)
+        result.deploy_logs = deploy_out.logs
+        result.deploy_ok = deploy_out.ok
+
+    return result

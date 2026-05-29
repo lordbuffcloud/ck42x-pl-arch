@@ -32,8 +32,18 @@ irm https://www.ck42x.com/install/ck42x-pl-arch.ps1 | iex
 
 ```bash
 ck42x                  # interactive TUI (alias: ck42x-pl-arch)
-ck42x forge --title "repo-check" --goal "Safe git health snapshot"
+ck42x forge --title "repo-check" --goal "Safe git health snapshot" --deploy
+ck42x deploy --slug repo-check   # flash last bundle to Flipper
 ```
+
+### Deploy to Flipper (USB serial)
+
+After forging a Windows handoff mission, `ck42x` can:
+
+1. Upload `launch-<slug>.txt` to `/ext/ck42x-payloads/` (Flipper BadUSB payload).
+2. Place `agent-<slug>.ps1` on the PAYLOADBAY Exfil Disk under `scripts/` — either by copying to an already-mounted `PAYLOADBAY` volume, or by patching `payloadbay.img` and uploading it to `/ext/apps_data/mass_storage/payloadbay.img`.
+
+Requirements: Flipper on the normal desktop (not USB Storage mode), qFlipper closed, Python deps installed (`pyserial`, `pyfatfs`). Set `flipper_port` to `COM10` (or your port) in `~/.config/ck42x-pl-arch/config.json` if auto-detect fails.
 
 ## Config
 

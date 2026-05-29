@@ -128,6 +128,11 @@ class ForgeScreen(Screen):
             yield Checkbox("Linux (.sh)", value=True, id="linux")
             yield Checkbox("macOS (.sh)", value=True, id="mac")
         yield Checkbox("Mass Storage handoff (PAYLOADBAY scripts/)", value=True, id="handoff")
+        yield Checkbox(
+            "Deploy to Flipper after forge (launch .txt + PAYLOADBAY scripts/)",
+            value=self.settings.auto_deploy_after_forge,
+            id="deploy",
+        )
         with Horizontal():
             yield Button("Generate bundle", variant="primary", id="go")
             yield Button("Back", id="back")
@@ -169,12 +174,19 @@ class ForgeScreen(Screen):
             return
 
         handoff = self.query_one("#handoff", Checkbox).value
+        deploy = self.query_one("#deploy", Checkbox).value
         log.write("[cyan]Forging mission bundle...[/]")
 
         try:
             result = await forge_mission(
                 self.settings,
-                ForgeRequest(title=title, goal=goal, platforms=platforms, handoff=handoff),
+                ForgeRequest(
+                    title=title,
+                    goal=goal,
+                    platforms=platforms,
+                    handoff=handoff,
+                    deploy=deploy,
+                ),
             )
         except Exception as exc:  # noqa: BLE001
             log.write(f"[red]Forge failed:[/] {exc}")
@@ -188,7 +200,13 @@ class ForgeScreen(Screen):
         for name in result.files:
             log.write(f"  - {name}")
         log.write(f"\n[cyan]Bundle:[/] {result.bundle_dir}")
-        log.write("[dim]Copy launch-*.txt to Flipper /ext/ck42x-payloads/[/]")
+        if result.deploy_logs:
+            log.write("[bold]Flipper deploy:[/]")
+            for line in result.deploy_logs:
+                color = "green" if line.startswith("[ok]") else "red" if line.startswith("[error]") else "dim"
+                log.write(f"[{color}]{line}[/]")
+        elif not deploy:
+            log.write("[dim]Enable 'Deploy to Flipper' or run: ck42x deploy[/]")
 
 
 class SettingsScreen(Screen):
@@ -206,6 +224,9 @@ class SettingsScreen(Screen):
         yield Input(id="model")
         yield Label("Output directory")
         yield Input(id="out")
+        yield Label("Flipper serial port (optional, e.g. COM10)")
+        yield Input(placeholder="auto-detect", id="flipper_port")
+        yield Checkbox("Deploy to Flipper after forge by default", id="auto_deploy")
         with Horizontal():
             yield Button("Save", variant="primary", id="save")
             yield Button("Back", id="back")
@@ -215,6 +236,8 @@ class SettingsScreen(Screen):
         self.query_one("#key", Input).value = self.settings.deepseek_api_key
         self.query_one("#model", Input).value = self.settings.deepseek_model
         self.query_one("#out", Input).value = self.settings.output_dir
+        self.query_one("#flipper_port", Input).value = self.settings.flipper_port
+        self.query_one("#auto_deploy", Checkbox).value = self.settings.auto_deploy_after_forge
 
     @on(Button.Pressed, "#back")
     def back(self) -> None:
@@ -225,6 +248,8 @@ class SettingsScreen(Screen):
         self.settings.deepseek_api_key = self.query_one("#key", Input).value.strip()
         self.settings.deepseek_model = self.query_one("#model", Input).value.strip() or "deepseek-chat"
         self.settings.output_dir = self.query_one("#out", Input).value.strip() or str(self.settings.output_path)
+        self.settings.flipper_port = self.query_one("#flipper_port", Input).value.strip()
+        self.settings.auto_deploy_after_forge = self.query_one("#auto_deploy", Checkbox).value
         self.settings.save()
         self.app.pop_screen()
 

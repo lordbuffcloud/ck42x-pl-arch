@@ -9,6 +9,10 @@ APP_NAME = "ck42x-pl-arch"
 CONFIG_DIR = Path(os.environ.get("CK42X_PL_ARCH_CONFIG", Path.home() / ".config" / APP_NAME))
 CONFIG_FILE = CONFIG_DIR / "config.json"
 DEFAULT_OUTPUT = Path.home() / "Documents" / "CK42X-PL-Arch" / "missions"
+DEFAULT_PAYLOADBAY_TEMPLATE = CONFIG_DIR / "payloadbay-exfil-fat16.img"
+PAYLOADBAY_TEMPLATE_URL = (
+    "https://www.ck42x.com/downloads/flipper/companions/payloadbay-exfil-fat16.img"
+)
 
 
 @dataclass
@@ -18,6 +22,15 @@ class Settings:
     output_dir: str = str(DEFAULT_OUTPUT)
     handoff_script_name: str = "agent.ps1"
     last_slug: str = ""
+    flipper_port: str = ""
+    flipper_baud: int = 115200
+    flipper_payload_dir: str = "/ext/ck42x-payloads"
+    flipper_mass_storage_image: str = "/ext/apps_data/mass_storage/payloadbay.img"
+    auto_deploy_after_forge: bool = False
+    deploy_use_mounted_volume: bool = True
+    deploy_upload_image: bool = True
+    payloadbay_template_url: str = PAYLOADBAY_TEMPLATE_URL
+    payloadbay_template_path: str = str(DEFAULT_PAYLOADBAY_TEMPLATE)
 
     @classmethod
     def load(cls) -> Settings:
