@@ -6,11 +6,14 @@ Screen {
 
 #main-header {
     height: auto;
-    padding: 0 1;
+    max-height: 55%;
+    padding: 0;
     border: none;
     background: #0a0a08;
     color: #ffd400;
     text-style: bold;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 #brand-title {
