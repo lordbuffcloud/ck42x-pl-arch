@@ -14,17 +14,23 @@ from ck42x_pl_arch import __version__
 from ck42x_pl_arch.config import Settings
 from ck42x_pl_arch.forge.mission import ForgeRequest, forge_mission
 
-BANNER = r"""
- ╔══════════════════════════════════════════════════════════════╗
- ║   ██████╗██╗  ██╗██╗  ██╗ ██╗  ██╗    ██████╗ ██╗      █████╗ ║
- ║  ██╔════╝██║ ██╔╝╚██╗██╔╝╚██╗██╔╝    ██╔══██╗██║     ██╔══██╗║
- ║  ██║     █████╔╝  ╚███╔╝  ╚███╔╝     ██████╔╝██║     ███████║║
- ║  ██║     ██╔═██╗  ██╔██╗  ██╔██╗     ██╔═══╝ ██║     ██╔══██║║
- ║  ╚██████╗██║  ██╗██╔╝ ██╗██╔╝ ██╗    ██║     ███████╗██║  ██║║
- ║   ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝    ╚═╝     ╚══════╝╚═╝  ╚═╝║
- ║           Payload Lab Architect · Authorized Labs Only        ║
- ╚══════════════════════════════════════════════════════════════╝
-"""
+_BOX_INNER = 62
+
+
+def _banner_line(text: str) -> str:
+    return f"| {text[:_BOX_INNER].ljust(_BOX_INNER)} |"
+
+
+BANNER = "\n".join(
+    [
+        "+" + "=" * (_BOX_INNER + 2) + "+",
+        _banner_line(""),
+        _banner_line("CK42X  ::  PAYLOAD LAB ARCHITECT (PL-ARCH)"),
+        _banner_line("Authorized training labs only"),
+        _banner_line(""),
+        "+" + "=" * (_BOX_INNER + 2) + "+",
+    ]
+)
 
 
 class MainMenuScreen(Screen):
@@ -41,11 +47,11 @@ class MainMenuScreen(Screen):
     ]
 
     MENU = [
-        ("forge", "▸  Forge Mission Payload", "Build .txt + host scripts for Flipper labs"),
-        ("library", "▸  Mission Library", "Open output folder & recent bundles"),
-        ("settings", "▸  Settings", "DeepSeek API key · output path · model"),
-        ("install", "▸  Install Command", "One-liner for teammates / ck42x.com"),
-        ("quit", "▸  Quit", "Exit PL-ARCH"),
+        ("forge", ">  Forge Mission Payload", "Build .txt + host scripts for Flipper labs"),
+        ("library", ">  Mission Library", "Open output folder & recent bundles"),
+        ("settings", ">  Settings", "DeepSeek API key - output path - model"),
+        ("install", ">  Install Command", "One-liner for teammates / ck42x.com"),
+        ("quit", ">  Quit", "Exit PL-ARCH"),
     ]
 
     def __init__(self, settings: Settings) -> None:
@@ -67,7 +73,7 @@ class MainMenuScreen(Screen):
         out = self.settings.output_path
         key = "configured" if self.settings.deepseek_api_key else "not set"
         self.query_one("#status-bar", Static).update(
-            f" v{__version__} │ output: {out} │ deepseek: {key} │ ↑↓ navigate · enter select · q quit "
+            f" v{__version__} | output: {out} | deepseek: {key} | up/down navigate, enter select, q quit "
         )
 
     def _sync_highlight(self) -> None:
@@ -163,7 +169,7 @@ class ForgeScreen(Screen):
             return
 
         handoff = self.query_one("#handoff", Checkbox).value
-        log.write("[cyan]Forging mission bundle…[/]")
+        log.write("[cyan]Forging mission bundle...[/]")
 
         try:
             result = await forge_mission(
@@ -177,10 +183,10 @@ class ForgeScreen(Screen):
         log.write(f"[green]Done.[/] slug=[bold]{result.slug}[/]")
         log.write(f"[dim]risk={result.risk}[/]")
         for note in result.notes:
-            log.write(f"[yellow]•[/] {note}")
+            log.write(f"[yellow]*[/] {note}")
         log.write("[bold]Files:[/]")
         for name in result.files:
-            log.write(f"  · {name}")
+            log.write(f"  - {name}")
         log.write(f"\n[cyan]Bundle:[/] {result.bundle_dir}")
         log.write("[dim]Copy launch-*.txt to Flipper /ext/ck42x-payloads/[/]")
 
@@ -247,7 +253,7 @@ class LibraryScreen(Screen):
             return
         for m in missions:
             manifest = m / "manifest.json"
-            tag = "[green]✓[/]" if manifest.exists() else "[yellow]?[/]"
+            tag = "[green][ok][/]" if manifest.exists() else "[yellow]?[/]"
             log.write(f"{tag} [bold]{m.name}[/]")
             for f in sorted(m.glob("*")):
                 if f.is_file():

@@ -34,16 +34,16 @@ mkdir -p "$INSTALL_ROOT" "$BIN_DIR"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-echo "→ Downloading ck42x-pl-arch ${CK42X_PL_ARCH_VERSION}…"
+echo "-> Downloading ck42x-pl-arch ${CK42X_PL_ARCH_VERSION}..."
 if ! curl -fsSL "$SRC_TARBALL" -o "$TMP/pkg.tar.gz" 2>/dev/null; then
-  echo "→ Tarball not on CDN yet; using embedded minimal install via pip & git fallback…"
+  echo "-> Tarball not on CDN yet; using embedded minimal install via pip & git fallback..."
   need_cmd pip3
   pip3 install --user --upgrade "textual>=0.79" "httpx>=0.27" "rich>=13.7" 2>/dev/null || true
   if [ -d "$INSTALL_ROOT/src" ]; then
-    echo "→ Existing source install found at $INSTALL_ROOT"
+    echo "-> Existing source install found at $INSTALL_ROOT"
   else
     GH_FALLBACK="https://github.com/lordbuffcloud/ck42x-pl-arch/archive/refs/heads/main.tar.gz"
-  echo "→ Trying GitHub source fallback…"
+  echo "-> Trying GitHub source fallback..."
   if curl -fsSL "$GH_FALLBACK" -o "$TMP/pkg.tar.gz" 2>/dev/null; then
     tar -xzf "$TMP/pkg.tar.gz" -C "$TMP"
     PKG_DIR="$(find "$TMP" -maxdepth 1 -type d -name 'ck42x-pl-arch*' | head -1)"
@@ -78,7 +78,7 @@ else
   cp -a "$PKG_DIR/." "$INSTALL_ROOT/"
 fi
 
-echo "→ Installing Python package…"
+echo "-> Installing Python package..."
 python3 -m pip install --user --upgrade "$INSTALL_ROOT" 2>/dev/null \
   || python3 -m pip install --user --upgrade -e "$INSTALL_ROOT"
 
@@ -97,6 +97,6 @@ if ! echo ":$PATH:" | grep -q ":$BIN_DIR:"; then
 fi
 
 echo ""
-echo "  ✓ Installed Payload Lab Architect"
+echo "  [ok] Installed Payload Lab Architect"
 echo "  Run: ck42x"
 echo ""
