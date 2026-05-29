@@ -47,6 +47,9 @@ if ! curl -fsSL "$SRC_TARBALL" -o "$TMP/pkg.tar.gz" 2>/dev/null; then
   if curl -fsSL "$GH_FALLBACK" -o "$TMP/pkg.tar.gz" 2>/dev/null; then
     tar -xzf "$TMP/pkg.tar.gz" -C "$TMP"
     PKG_DIR="$(find "$TMP" -maxdepth 1 -type d -name 'ck42x-pl-arch*' | head -1)"
+    if [ -z "$PKG_DIR" ] && [ -f "$TMP/pyproject.toml" ]; then
+      PKG_DIR="$TMP"
+    fi
     if [ -n "$PKG_DIR" ]; then
       rm -rf "$INSTALL_ROOT"
       mkdir -p "$INSTALL_ROOT"
@@ -63,6 +66,9 @@ if ! curl -fsSL "$SRC_TARBALL" -o "$TMP/pkg.tar.gz" 2>/dev/null; then
 else
   tar -xzf "$TMP/pkg.tar.gz" -C "$TMP"
   PKG_DIR="$(find "$TMP" -maxdepth 1 -type d -name 'ck42x-pl-arch*' | head -1)"
+  if [ -z "$PKG_DIR" ] && [ -f "$TMP/pyproject.toml" ]; then
+    PKG_DIR="$TMP"
+  fi
   if [ -z "$PKG_DIR" ]; then
     echo "error: invalid tarball layout" >&2
     exit 1
