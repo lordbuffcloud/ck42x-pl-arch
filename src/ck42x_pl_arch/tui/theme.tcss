@@ -6,10 +6,11 @@ Screen {
 
 #main-header {
     height: auto;
-    padding: 1 2;
-    border: heavy #ffd400;
-    background: #121100;
-    color: #fff8dc;
+    padding: 0 1;
+    border: none;
+    background: #0a0a08;
+    color: #ffd400;
+    text-style: bold;
 }
 
 #brand-title {

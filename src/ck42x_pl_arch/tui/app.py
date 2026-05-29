@@ -13,25 +13,7 @@ from textual.widgets import Button, Checkbox, Footer, Input, Label, RichLog, Sta
 from ck42x_pl_arch import __version__
 from ck42x_pl_arch.config import Settings
 from ck42x_pl_arch.forge.mission import ForgeRequest, forge_mission
-
-_BOX_INNER = 62
-
-
-def _banner_line(text: str) -> str:
-    return f"| {text[:_BOX_INNER].ljust(_BOX_INNER)} |"
-
-
-BANNER = "\n".join(
-    [
-        "+" + "=" * (_BOX_INNER + 2) + "+",
-        _banner_line(r"     \     /"),
-        _banner_line(r"      \   /    CK42X  ::  PAYLOAD LAB ARCHITECT"),
-        _banner_line(r"       ) (     PL-ARCH  //  BEE OPS"),
-        _banner_line(r"      / . \    BLACK + GOLD  |  Authorized labs only"),
-        _banner_line(r"     /     \"),
-        "+" + "=" * (_BOX_INNER + 2) + "+",
-    ]
-)
+from ck42x_pl_arch.tui.banner_art import banner_markup
 
 
 class MainMenuScreen(Screen):
@@ -61,7 +43,7 @@ class MainMenuScreen(Screen):
         self.index = 0
 
     def compose(self) -> ComposeResult:
-        yield Static(BANNER, id="main-header")
+        yield Static(banner_markup(), id="main-header")
         items = []
         for i, (_key, label, hint) in enumerate(self.MENU):
             items.append(Static(f"{label}\n[dim]{hint}[/dim]", classes="menu-item", id=f"item-{i}"))
