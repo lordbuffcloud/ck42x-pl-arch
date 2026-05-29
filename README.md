@@ -31,8 +31,8 @@ irm https://www.ck42x.com/install/ck42x-pl-arch.ps1 | iex
 ## Run
 
 ```bash
-ck42x-pl-arch          # interactive TUI
-ck42x-pl-arch forge --title "repo-check" --goal "Safe git health snapshot"
+ck42x                  # interactive TUI (alias: ck42x-pl-arch)
+ck42x forge --title "repo-check" --goal "Safe git health snapshot"
 ```
 
 ## Config

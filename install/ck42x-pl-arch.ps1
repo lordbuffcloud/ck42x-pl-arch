@@ -66,14 +66,17 @@ try {
 Write-Host '-> Installing Python package...' -ForegroundColor Gray
 python -m pip install --user --upgrade $InstallRoot
 
-$wrapper = Join-Path $BinDir 'ck42x-pl-arch.cmd'
-@'
+$wrapperBody = @'
 @echo off
 python -m ck42x_pl_arch %*
-'@ | Set-Content -LiteralPath $wrapper -Encoding ASCII
+'@
+foreach ($name in @('ck42x', 'ck42x-pl-arch')) {
+  Set-Content -LiteralPath (Join-Path $BinDir "$name.cmd") -Value $wrapperBody -Encoding ASCII
+}
 
 Write-Host ''
-Write-Host '  Installed ck42x-pl-arch' -ForegroundColor Green
-Write-Host "  Run: ck42x-pl-arch  (or: python -m ck42x_pl_arch)" -ForegroundColor Cyan
+Write-Host '  Installed Payload Lab Architect' -ForegroundColor Green
+Write-Host '  Run: ck42x' -ForegroundColor Cyan
+Write-Host '  Alias: ck42x-pl-arch' -ForegroundColor DarkGray
 Write-Host "  Add to PATH if needed: $BinDir" -ForegroundColor DarkGray
 Write-Host ''

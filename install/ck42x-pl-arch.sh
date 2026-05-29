@@ -82,12 +82,14 @@ echo "→ Installing Python package…"
 python3 -m pip install --user --upgrade "$INSTALL_ROOT" 2>/dev/null \
   || python3 -m pip install --user --upgrade -e "$INSTALL_ROOT"
 
-WRAPPER="$BIN_DIR/ck42x-pl-arch"
-cat >"$WRAPPER" <<EOF
+for name in ck42x ck42x-pl-arch; do
+  WRAPPER="$BIN_DIR/$name"
+  cat >"$WRAPPER" <<EOF
 #!/usr/bin/env bash
 exec python3 -m ck42x_pl_arch "\$@"
 EOF
-chmod +x "$WRAPPER"
+  chmod +x "$WRAPPER"
+done
 
 if ! echo ":$PATH:" | grep -q ":$BIN_DIR:"; then
   echo ""
@@ -95,6 +97,6 @@ if ! echo ":$PATH:" | grep -q ":$BIN_DIR:"; then
 fi
 
 echo ""
-echo "  ✓ Installed ck42x-pl-arch"
-echo "  Run: ck42x-pl-arch"
+echo "  ✓ Installed Payload Lab Architect"
+echo "  Run: ck42x"
 echo ""

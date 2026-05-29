@@ -17,6 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
+ck42x = "ck42x_pl_arch.__main__:main"
 ck42x-pl-arch = "ck42x_pl_arch.__main__:main"
 
 [tool.hatch.build.targets.wheel]
