@@ -24,10 +24,11 @@ def _banner_line(text: str) -> str:
 BANNER = "\n".join(
     [
         "+" + "=" * (_BOX_INNER + 2) + "+",
-        _banner_line(""),
-        _banner_line("CK42X  ::  PAYLOAD LAB ARCHITECT (PL-ARCH)"),
-        _banner_line("Authorized training labs only"),
-        _banner_line(""),
+        _banner_line(r"     \     /"),
+        _banner_line(r"      \   /    CK42X  ::  PAYLOAD LAB ARCHITECT"),
+        _banner_line(r"       ) (     PL-ARCH  //  BEE OPS"),
+        _banner_line(r"      / . \    BLACK + GOLD  |  Authorized labs only"),
+        _banner_line(r"     /     \"),
         "+" + "=" * (_BOX_INNER + 2) + "+",
     ]
 )
@@ -117,7 +118,7 @@ class ForgeScreen(Screen):
         self.settings = settings
 
     def compose(self) -> ComposeResult:
-        yield Static("[bold #00e5ff]Forge Mission Payload[/]", id="main-header")
+        yield Static("[bold #ffd400]Forge Mission Payload[/]", id="main-header")
         yield Label("Mission title")
         yield Input(placeholder="e.g. repo-health-check", id="title")
         yield Label("Mission goal (what should the host agent accomplish?)")
@@ -175,7 +176,7 @@ class ForgeScreen(Screen):
 
         handoff = self.query_one("#handoff", Checkbox).value
         deploy = self.query_one("#deploy", Checkbox).value
-        log.write("[cyan]Forging mission bundle...[/]")
+        log.write("[#ffd400]Forging mission bundle...[/]")
 
         try:
             result = await forge_mission(
@@ -199,7 +200,7 @@ class ForgeScreen(Screen):
         log.write("[bold]Files:[/]")
         for name in result.files:
             log.write(f"  - {name}")
-        log.write(f"\n[cyan]Bundle:[/] {result.bundle_dir}")
+        log.write(f"\n[#ffd400]Bundle:[/] {result.bundle_dir}")
         if result.deploy_logs:
             log.write("[bold]Flipper deploy:[/]")
             for line in result.deploy_logs:
@@ -217,7 +218,7 @@ class SettingsScreen(Screen):
         self.settings = settings
 
     def compose(self) -> ComposeResult:
-        yield Static("[bold #00e5ff]Settings[/]", id="main-header")
+        yield Static("[bold #ffd400]Settings[/]", id="main-header")
         yield Label("DeepSeek API key (stored locally)")
         yield Input(password=True, id="key")
         yield Label("Model")
@@ -262,7 +263,7 @@ class LibraryScreen(Screen):
         self.settings = settings
 
     def compose(self) -> ComposeResult:
-        yield Static("[bold #00e5ff]Mission Library[/]", id="main-header")
+        yield Static("[bold #ffd400]Mission Library[/]", id="main-header")
         yield RichLog(id="log", highlight=True, markup=True)
         yield Button("Back", id="back")
         yield Footer()
@@ -271,7 +272,7 @@ class LibraryScreen(Screen):
         log = self.query_one("#log", RichLog)
         root = self.settings.output_path
         root.mkdir(parents=True, exist_ok=True)
-        log.write(f"[cyan]Output root:[/] {root}\n")
+        log.write(f"[#ffd400]Output root:[/] {root}\n")
         missions = sorted([p for p in root.iterdir() if p.is_dir()])
         if not missions:
             log.write("[dim]No missions yet. Use Forge Mission Payload.[/]")
@@ -296,7 +297,7 @@ class InstallScreen(Screen):
     INSTALL_PS = "irm https://www.ck42x.com/install/ck42x-pl-arch.ps1 | iex"
 
     def compose(self) -> ComposeResult:
-        yield Static("[bold #00e5ff]Install Command[/]", id="main-header")
+        yield Static("[bold #ffd400]Install Command[/]", id="main-header")
         yield RichLog(id="log", highlight=True, markup=True)
         yield Button("Back", id="back")
         yield Footer()
@@ -304,9 +305,9 @@ class InstallScreen(Screen):
     def on_mount(self) -> None:
         log = self.query_one("#log", RichLog)
         log.write("[bold]Linux / macOS[/]")
-        log.write(f"[cyan]{self.INSTALL_SH}[/]\n")
+        log.write(f"[#ffea00]{self.INSTALL_SH}[/]\n")
         log.write("[bold]Windows (PowerShell)[/]")
-        log.write(f"[cyan]{self.INSTALL_PS}[/]\n")
+        log.write(f"[#ffea00]{self.INSTALL_PS}[/]\n")
         log.write("[dim]Paste on ck42x.com Payload Bay page for operators.[/]")
 
     @on(Button.Pressed, "#back")
@@ -316,6 +317,7 @@ class InstallScreen(Screen):
 
 class PlArchApp(App):
     TITLE = "CK42X PL-ARCH"
+    SUB_TITLE = "bee ops // black + gold"
     CSS_PATH = "theme.tcss"
 
     def __init__(self) -> None:

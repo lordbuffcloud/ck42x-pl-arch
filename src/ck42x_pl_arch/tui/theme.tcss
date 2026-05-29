@@ -1,27 +1,29 @@
+/* CK42X PL-ARCH — nyanBEE black + gold console */
+
 Screen {
-    background: #06080c;
+    background: #0a0a08;
 }
 
 #main-header {
     height: auto;
     padding: 1 2;
-    border: heavy #00d4aa;
-    background: #0c1018;
-    color: #e8f4ff;
+    border: heavy #ffd400;
+    background: #121100;
+    color: #fff8dc;
 }
 
 #brand-title {
     text-style: bold;
-    color: #00e5ff;
+    color: #ffd400;
 }
 
 #brand-sub {
-    color: #6b7d93;
+    color: #8a7a40;
 }
 
 #menu-panel {
-    border: round #1a3a4a;
-    background: #0a0e14;
+    border: round #4a4200;
+    background: #0f0e08;
     padding: 1 2;
     margin: 1 2;
 }
@@ -30,25 +32,26 @@ Screen {
     height: 3;
     padding: 0 1;
     margin: 0 0 1 0;
-    background: #0f141c;
+    background: #141208;
+    color: #e8e0c8;
 }
 
 .menu-item.-active {
-    background: #102a35;
-    border: tall #00e5ff;
-    color: #00e5ff;
+    background: #1f1a00;
+    border: tall #ffd400;
+    color: #ffea00;
     text-style: bold;
 }
 
 .menu-item.-muted {
-    color: #4a5a6a;
+    color: #5c5530;
 }
 
 #status-bar {
     dock: bottom;
     height: 1;
-    background: #00d4aa;
-    color: #06080c;
+    background: #ffd400;
+    color: #0a0a08;
     padding: 0 1;
     text-style: bold;
 }
@@ -57,45 +60,79 @@ Screen {
     dock: bottom;
     height: 1;
     offset: 0 -2;
-    color: #4a6070;
+    color: #6b6030;
     padding: 0 2;
 }
 
+Footer {
+    background: #0a0a08;
+    color: #8a7a40;
+}
+
+Footer > .footer--key {
+    color: #ffd400;
+    text-style: bold;
+}
+
+Footer > .footer--description {
+    color: #c8b860;
+}
+
 Form Label {
-    color: #8ab4d4;
+    color: #d4c878;
     margin-top: 1;
 }
 
 Input, TextArea, Select {
-    border: tall #1e3a4a;
-    background: #0c1218;
-    color: #e0f0ff;
+    border: tall #3a3500;
+    background: #0c0b06;
+    color: #fff8dc;
 }
 
 Input:focus, TextArea:focus {
-    border: tall #00e5ff;
+    border: tall #ffd400;
 }
 
 Checkbox {
-    background: #0c1218;
-    color: #c8dce8;
+    background: #0c0b06;
+    color: #e8e0c8;
+}
+
+Checkbox:focus {
+    border: tall #ffd400;
 }
 
 Button.primary {
-    background: #00d4aa;
-    color: #06080c;
+    background: #ffd400;
+    color: #0a0a08;
     text-style: bold;
+    border: tall #ffea00;
+}
+
+Button.primary:hover {
+    background: #ffea00;
 }
 
 Button {
-    background: #1a2838;
-    color: #c8dce8;
-    border: tall #2a4050;
+    background: #1a1808;
+    color: #e8e0c8;
+    border: tall #4a4200;
+}
+
+Button:hover {
+    background: #252010;
+    border: tall #665c00;
+}
+
+RichLog {
+    border: round #3a3500;
+    background: #060605;
+    color: #e8e0c8;
 }
 
 #log-panel {
-    border: round #2a2030;
-    background: #080a0e;
+    border: round #3a3500;
+    background: #060605;
     height: 1fr;
     padding: 1;
 }
