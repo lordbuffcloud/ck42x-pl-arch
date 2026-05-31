@@ -27,6 +27,8 @@ Rules:
 - Read-only diagnostics first; block destructive, persistence, lateral movement, C2 patterns.
 - Each agent under 200 lines with a tight REPL or single-shot plan loop and clear banners.
 - Tailor prompts to the operator goal while enforcing safety boundaries.
+- CRITICAL: agent_ps1, agent_sh_linux, and agent_sh_macos must be valid JSON strings.
+  Escape every double quote as \\" and every newline as \\n. Do not put raw line breaks inside JSON strings.
 """
 
 
@@ -36,6 +38,23 @@ def _strip_json_fence(text: str) -> str:
         clean = re.sub(r"^```(?:json)?\s*", "", clean)
         clean = re.sub(r"\s*```$", "", clean)
     return clean.strip()
+
+
+def parse_forge_json(text: str) -> dict[str, Any]:
+    """Parse DeepSeek forge JSON; raise json.JSONDecodeError with context on failure."""
+    clean = _strip_json_fence(text)
+    try:
+        data = json.loads(clean)
+    except json.JSONDecodeError as exc:
+        raise json.JSONDecodeError(
+            f"{exc.msg} (DeepSeek forge JSON line {exc.lineno})",
+            exc.doc,
+            exc.pos,
+        ) from exc
+    if not isinstance(data, dict):
+        msg = "DeepSeek forge JSON must be an object"
+        raise json.JSONDecodeError(msg, clean, 0)
+    return data
 
 
 async def generate_mission_bundle(
@@ -77,4 +96,4 @@ Generate host agents for each listed platform."""
         payload = response.json()
 
     content = payload["choices"][0]["message"]["content"]
-    return json.loads(_strip_json_fence(content))
+    return parse_forge_json(content)

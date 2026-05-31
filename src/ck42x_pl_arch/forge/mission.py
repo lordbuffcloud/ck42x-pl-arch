@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 from ck42x_pl_arch.config import Settings
 from ck42x_pl_arch.emit import ducky, shell, powershell
 from ck42x_pl_arch.forge import deepseek
@@ -55,18 +57,29 @@ async def forge_mission(settings: Settings, request: ForgeRequest) -> ForgeResul
     notes: list[str] = ["Template agents (no DeepSeek API key configured)."]
 
     if settings.deepseek_api_key.strip():
-        agents = await deepseek.generate_mission_bundle(
-            api_key=settings.deepseek_api_key.strip(),
-            model=settings.deepseek_model,
-            goal=request.goal,
-            title=request.title,
-            platforms=request.platforms,
-        )
-        slug = agents.get("mission_slug") or slug
-        risk = str(agents.get("risk", "medium"))
-        notes = list(agents.get("notes") or [])
-        bundle_dir = settings.output_path / slug
-        bundle_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            agents = await deepseek.generate_mission_bundle(
+                api_key=settings.deepseek_api_key.strip(),
+                model=settings.deepseek_model,
+                goal=request.goal,
+                title=request.title,
+                platforms=request.platforms,
+            )
+            slug = agents.get("mission_slug") or slug
+            risk = str(agents.get("risk", "medium"))
+            notes = list(agents.get("notes") or [])
+            bundle_dir = settings.output_path / slug
+            bundle_dir.mkdir(parents=True, exist_ok=True)
+        except json.JSONDecodeError as exc:
+            agents = _template_agents(request.goal, request.title)
+            agents["mission_slug"] = slug
+            agents["mission_title"] = request.title
+            notes = [
+                f"DeepSeek returned invalid JSON ({exc.msg}); used template agents instead.",
+                "Tip: retry forge, or remove DEEPSEEK_API_KEY to always use templates.",
+            ]
+        except httpx.HTTPError as exc:
+            raise RuntimeError(f"DeepSeek API request failed: {exc}") from exc
     else:
         agents = _template_agents(request.goal, request.title)
         agents["mission_slug"] = slug
@@ -87,7 +100,7 @@ async def forge_mission(settings: Settings, request: ForgeRequest) -> ForgeResul
             goal=request.goal,
             activity="CK42X PL-ARCH Handoff",
         ) if request.handoff else ducky.windows_direct(script_ps1, request.title)
-        (bundle_dir / txt_name).write_text(ducky_body, encoding="ascii")
+        (bundle_dir / txt_name).write_text(ducky_body, encoding="utf-8")
         written.append(txt_name)
 
     if "linux" in request.platforms:
@@ -97,7 +110,7 @@ async def forge_mission(settings: Settings, request: ForgeRequest) -> ForgeResul
         if request.handoff:
             txt = ducky.linux_handoff(f"agent-{slug}-linux.sh", request.title)
             name = f"launch-{slug}-linux.txt"
-            (bundle_dir / name).write_text(txt, encoding="ascii")
+            (bundle_dir / name).write_text(txt, encoding="utf-8")
             written.append(name)
 
     if "macos" in request.platforms:
@@ -110,7 +123,7 @@ async def forge_mission(settings: Settings, request: ForgeRequest) -> ForgeResul
         if request.handoff:
             txt = ducky.macos_handoff(f"agent-{slug}-mac.sh", request.title)
             name = f"launch-{slug}-mac.txt"
-            (bundle_dir / name).write_text(txt, encoding="ascii")
+            (bundle_dir / name).write_text(txt, encoding="utf-8")
             written.append(name)
 
     manifest = {
