@@ -1,18 +1,21 @@
-"""CK42X PL-ARCH TUI banner — compact bee + title (designed for the menu layout)."""
+"""CK42X PL-ARCH TUI banner — nyanBEE bee crown + title."""
 
 from __future__ import annotations
 
-BANNER_WIDTH = 56
+BANNER_WIDTH = 52
 
-# Small top-down bee mark — gold on black, ~56 cols, 7 art lines.
-_BEE: tuple[str, ...] = (
-    "                    ▄▄▄▄▄▄▄▄▄                     ",
-    "                  ▄████████████▄                   ",
-    "                 ████▀▀▀██▀▀▀████                  ",
-    "                ████  ▄████▄  ████                 ",
-    "                 ████▄██▀▀██▄████                  ",
-    "                  ▀████▀  ▀████▀                   ",
-    "                    ▀▀      ▀▀                     ",
+# Front-facing bee crown (Flipper / nyanBEE brand charset). Stripped from the
+# bee-crown mark and centered — reads clearly as a bee, not an abstract blob.
+_BEE_CROWN: tuple[str, ...] = (
+    "                   ▄▄  ▄▄  ▄▄                   ",
+    "                    █ ▀  ▀ █                    ",
+    "                     ▀ ▀▀▀█                     ",
+    "               ▄   ▄▄  █▀▀█  ▄▄   ▄              ",
+    "                ▄    ▀▄█▄▄█▄▀    ▄               ",
+    "                 █▀▀▀ █    █▀▀▀▀█                ",
+    "                 ▀    █▀▀▀▀█    ▀                ",
+    "                     ▀▀    ▀▀                     ",
+    "                      ▀    ▀                      ",
 )
 
 _TAGLINE = "CK42X  ·  PL-ARCH"
@@ -27,7 +30,7 @@ def _center(text: str, width: int = BANNER_WIDTH) -> str:
 
 
 BANNER_LINES: tuple[str, ...] = (
-    *_BEE,
+    *_BEE_CROWN,
     "",
     _center(_TAGLINE),
     _center(_SUBTITLE),
@@ -37,7 +40,7 @@ BANNER_WIDTH = max(len(line) for line in BANNER_LINES if line) if BANNER_LINES e
 
 
 def banner_markup() -> str:
-    """Rich/Textual markup: gold bee crest + centered copy."""
+    """Rich/Textual markup: gold bee crown + centered copy."""
     parts: list[str] = []
     for raw in BANNER_LINES:
         stripped = raw.strip()
