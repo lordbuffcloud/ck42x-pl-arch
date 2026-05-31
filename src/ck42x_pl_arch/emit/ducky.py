@@ -51,14 +51,22 @@ def windows_handoff(*, script_name: str, title: str, goal: str, activity: str) -
     )
     lines.extend(_chunk_string_line(poll))
     lines.append("ENTER")
+    safe_goal = goal.replace("'", "''")
     run = (
-        f"if($b){{$s=$b+'scripts\\'+$f;Write-Host ('[OK] PAYLOADBAY: '+$b) -ForegroundColor Green;"
+        f"if($b){{"
+        f"$s=$b+'scripts\\'+$f;"
+        f"Write-Host ('[OK] PAYLOADBAY: '+$b) -ForegroundColor Green;"
         f"Write-Host ('[>>] '+$s) -ForegroundColor Yellow;Write-Host '';"
-        f"try{{$env:PAYLOADBAY_MISSION_GOAL='{goal.replace(chr(39), chr(39)*2)}';"
-        f"& $s}}catch{{Write-Host $_.Exception.Message -ForegroundColor Red;"
-        "Read-Host 'Error - Press Enter'}}"
-        "}else{Write-Host '[!!] PAYLOADBAY not found.' -ForegroundColor Red;"
-        "Read-Host 'Press Enter'}"
+        f"try{{$env:PAYLOADBAY_MISSION_GOAL='{safe_goal}';"
+        f"& $s"
+        f"}}catch{{"
+        f"Write-Host $_.Exception.Message -ForegroundColor Red;"
+        f"Read-Host 'Error - Press Enter'"
+        f"}}"
+        f"}}else{{"
+        f"Write-Host '[!!] PAYLOADBAY not found.' -ForegroundColor Red;"
+        f"Read-Host 'Press Enter'"
+        f"}}"
     )
     lines.extend(_chunk_string_line(run))
     lines.append("ENTER")
