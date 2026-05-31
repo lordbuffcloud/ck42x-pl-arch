@@ -6,14 +6,14 @@ from pathlib import Path
 from textual import on, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Checkbox, Footer, Input, Label, RichLog, Static, TextArea
 
 from ck42x_pl_arch import __version__
 from ck42x_pl_arch.config import Settings
 from ck42x_pl_arch.forge.mission import ForgeRequest, forge_mission
-from ck42x_pl_arch.tui.banner_art import BANNER_LINES, banner_markup
+from ck42x_pl_arch.tui.banner_art import banner_markup
 
 
 class MainMenuScreen(Screen):
@@ -43,40 +43,23 @@ class MainMenuScreen(Screen):
         self.index = 0
 
     def compose(self) -> ComposeResult:
-        with Vertical(id="main-body"):
-            with VerticalScroll(id="banner-scroll", can_focus=False):
-                yield Static(banner_markup(), id="main-header")
-            items = []
-            for i, (_key, label, hint) in enumerate(self.MENU):
-                items.append(
-                    Static(f"{label}\n[dim]{hint}[/dim]", classes="menu-item", id=f"item-{i}")
-                )
-            yield Vertical(*items, id="menu-panel")
+        yield Static(banner_markup(), id="main-header")
+        items = []
+        for i, (_key, label, hint) in enumerate(self.MENU):
+            items.append(
+                Static(f"{label}\n[dim]{hint}[/dim]", classes="menu-item", id=f"item-{i}")
+            )
+        yield Vertical(*items, id="menu-panel")
         yield Static("", id="status-bar")
         yield Footer()
 
     def on_mount(self) -> None:
-        self._resize_banner()
         self._sync_highlight()
         out = self.settings.output_path
         key = "configured" if self.settings.deepseek_api_key else "not set"
         self.query_one("#status-bar", Static).update(
             f" v{__version__} | output: {out} | deepseek: {key} | up/down navigate, enter select, q quit "
         )
-
-    def _banner_line_count(self) -> int:
-        # Title + subtitle + spacer + bee art rows.
-        return len(BANNER_LINES) + 3
-
-    def _resize_banner(self) -> None:
-        scroll = self.query_one("#banner-scroll", VerticalScroll)
-        menu_rows = len(self.MENU) * 3 + 2
-        reserved = menu_rows + 3  # status bar + footer + margin
-        available = max(12, self.app.size.height - reserved)
-        scroll.styles.height = min(self._banner_line_count(), available)
-
-    def on_resize(self) -> None:
-        self._resize_banner()
 
     def _sync_highlight(self) -> None:
         for i in range(len(self.MENU)):
