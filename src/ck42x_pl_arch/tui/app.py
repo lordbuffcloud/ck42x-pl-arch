@@ -25,7 +25,6 @@ class MainMenuScreen(Screen):
         Binding("2", "pick(1)", show=False),
         Binding("3", "pick(2)", show=False),
         Binding("4", "pick(3)", show=False),
-        Binding("5", "pick(4)", show=False),
         Binding("q", "quit", "Quit"),
     ]
 
@@ -33,7 +32,6 @@ class MainMenuScreen(Screen):
         ("forge", ">  Create Payload", "Build .txt + host scripts for Flipper labs"),
         ("library", ">  Mission Library", "Open output folder & recent bundles"),
         ("settings", ">  Settings", "DeepSeek API key - output path - model"),
-        ("install", ">  Install Command", "One-liner for teammates / ck42x.com"),
         ("quit", ">  Quit", "Exit PL-ARCH"),
     ]
 
@@ -88,8 +86,6 @@ class MainMenuScreen(Screen):
             self.app.push_screen(LibraryScreen(self.settings))
         elif key == "settings":
             self.app.push_screen(SettingsScreen(self.settings))
-        elif key == "install":
-            self.app.push_screen(InstallScreen())
         elif key == "quit":
             self.app.exit()
 
@@ -268,31 +264,6 @@ class LibraryScreen(Screen):
             for f in sorted(m.glob("*")):
                 if f.is_file():
                     log.write(f"    [dim]{f.name}[/] ({f.stat().st_size} B)")
-
-    @on(Button.Pressed, "#back")
-    def back(self) -> None:
-        self.app.pop_screen()
-
-
-class InstallScreen(Screen):
-    BINDINGS = [Binding("escape", "pop_screen", "Back")]
-
-    INSTALL_SH = "curl -fsSL https://www.ck42x.com/install/ck42x-pl-arch.sh | bash"
-    INSTALL_PS = "irm https://www.ck42x.com/install/ck42x-pl-arch.ps1 | iex"
-
-    def compose(self) -> ComposeResult:
-        yield Static("[bold #ffd400]Install Command[/]", id="main-header")
-        yield RichLog(id="log", highlight=True, markup=True)
-        yield Button("Back", id="back")
-        yield Footer()
-
-    def on_mount(self) -> None:
-        log = self.query_one("#log", RichLog)
-        log.write("[bold]Linux / macOS[/]")
-        log.write(f"[#ffea00]{self.INSTALL_SH}[/]\n")
-        log.write("[bold]Windows (PowerShell)[/]")
-        log.write(f"[#ffea00]{self.INSTALL_PS}[/]\n")
-        log.write("[dim]Paste on ck42x.com Payload Bay page for operators.[/]")
 
     @on(Button.Pressed, "#back")
     def back(self) -> None:
