@@ -2,19 +2,34 @@
 
 Screen {
     background: #0a0a08;
+    layout: vertical;
+}
+
+#main-body {
+    height: 1fr;
+    min-height: 0;
+}
+
+#banner-scroll {
+    height: auto;
+    min-height: 0;
+    border: none;
+    background: #0a0a08;
 }
 
 #main-header {
     height: auto;
-    max-height: 58%;
-    min-height: 0;
+    width: auto;
     padding: 0 1;
     border: none;
     background: #0a0a08;
     color: #ffd400;
     text-style: bold;
-    overflow-y: auto;
-    overflow-x: auto;
+}
+
+#menu-panel {
+    height: 1fr;
+    min-height: 8;
 }
 
 #brand-title {

@@ -65,10 +65,10 @@ _BEE_ART = r"""
 
 _ALL_LINES: tuple[str, ...] = tuple(_BEE_ART.split("\n"))
 
-# Bee silhouette only: skip top/bottom frame bars (indices 0-2, 33+) and the
-# CKXX letter band (33-39). Index 32 is the tail stub with the wide center gap.
+# Bee silhouette: core art plus the bottom wing bar (index 33). Skip frame bars
+# (0-2), the CKXX letter band (34-39), and decorative footer (40+).
 _BEE_FIRST = 3
-_BEE_LAST = 32
+_BEE_LAST = 33
 
 
 def _crop_to_content(lines: list[str]) -> tuple[str, ...]:
