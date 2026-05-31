@@ -1,56 +1,30 @@
-"""CK42X PL-ARCH TUI banner — nyanBEE bee crown + title."""
+"""CK42X PL-ARCH TUI banner — user-provided CK42X figlet art."""
 
 from __future__ import annotations
 
-BANNER_WIDTH = 52
+_SUBTITLE = "Payload Lab Architect · bee ops // authorized labs only"
 
-# Front-facing bee crown (Flipper / nyanBEE brand charset). Stripped from the
-# bee-crown mark and centered — reads clearly as a bee, not an abstract blob.
-_BEE_CROWN: tuple[str, ...] = (
-    "                   ▄▄  ▄▄  ▄▄                   ",
-    "                    █ ▀  ▀ █                    ",
-    "                     ▀ ▀▀▀█                     ",
-    "               ▄   ▄▄  █▀▀█  ▄▄   ▄              ",
-    "                ▄    ▀▄█▄▄█▄▀    ▄               ",
-    "                 █▀▀▀ █    █▀▀▀▀█                ",
-    "                 ▀    █▀▀▀▀█    ▀                ",
-    "                     ▀▀    ▀▀                     ",
-    "                      ▀    ▀                      ",
+# Exact art as provided; do not reformat.
+_CK42X_ART: tuple[str, ...] = (
+    "        __      _____ ________                  __________               .__                    .___      ",
+    "  ____ |  | __ /  |  |\\_____  \\ ___  ___        \\______   \\_____  ___.__.|  |   _________     __| _/______",
+    "_/ ___\\|  |/ //   |  |_/  ____/ \\  \\/  /  ______ |     ___/\\__  \\<   |  ||  |  /  _ \\__  \\   / __ |/  ___/",
+    "\\  \\___|    </    ^   /       \\  >    <  /_____/ |    |     / __ \\\\___  ||  |_(  <_> ) __ \\_/ /_/ |\\___ \\ ",
+    " \\___  >__|_ \\____   |\\_______ \\/__/\\_ \\         |____|    (____  / ____||____/\\____(____  /\\____ /____  >",
+    "     \\/     \\/    |__|        \\/      \\/                        \\/\\/                     \\/      \\/    \\/ ",
 )
 
-_TAGLINE = "CK42X  ·  PL-ARCH"
-_SUBTITLE = "Payload Lab Architect"
-_HINT = "bee ops // authorized labs only"
-
-
-def _center(text: str, width: int = BANNER_WIDTH) -> str:
-    text = text[:width]
-    pad = max(0, (width - len(text)) // 2)
-    return f"{' ' * pad}{text}"
-
-
-BANNER_LINES: tuple[str, ...] = (
-    *_BEE_CROWN,
-    "",
-    _center(_TAGLINE),
-    _center(_SUBTITLE),
-    _center(_HINT),
-)
+BANNER_LINES: tuple[str, ...] = (*_CK42X_ART, "", _SUBTITLE)
 BANNER_WIDTH = max(len(line) for line in BANNER_LINES if line) if BANNER_LINES else 0
 
 
 def banner_markup() -> str:
-    """Rich/Textual markup: gold bee crown + centered copy."""
+    """Rich/Textual markup: gold figlet + dim subtitle."""
     parts: list[str] = []
     for raw in BANNER_LINES:
-        stripped = raw.strip()
-        if not stripped:
+        if not raw.strip():
             parts.append("")
-        elif stripped == _TAGLINE:
-            parts.append(f"[bold #ffd400]{raw}[/]")
-        elif stripped == _SUBTITLE:
-            parts.append(f"[#ffd400]{raw}[/]")
-        elif stripped == _HINT:
+        elif raw == _SUBTITLE:
             parts.append(f"[dim]{raw}[/]")
         else:
             parts.append(f"[#ffd400]{raw}[/]")
