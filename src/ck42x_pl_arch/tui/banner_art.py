@@ -1,8 +1,13 @@
-"""CK42X PL-ARCH banner — CK42X bee block art (user-provided)."""
+"""CK42X PL-ARCH banner — full bee block art (user-provided)."""
 
 from __future__ import annotations
 
-# Exact art as provided; do not reformat or center.
+BLOCK = "\u2588"
+TITLE = "[bold #ffd400]CK42X[/] [dim]PL-ARCH · Payload Lab Architect[/]"
+SUBTITLE = "[dim]bee ops // authorized labs only[/]"
+
+# User-provided bee art (git 3df9b75). Block-letter rows spell CKXX in the source;
+# the TUI shows a readable Rich title instead of those pixel glyphs.
 _BEE_ART = r"""
                                                                                                 
  █████████████████████████████████████████████████████████████████████████████████████████████ 
@@ -58,19 +63,43 @@ _BEE_ART = r"""
                                                                                                
 """.strip("\n")
 
-BANNER_LINES: tuple[str, ...] = tuple(_BEE_ART.split("\n"))
+_ALL_LINES: tuple[str, ...] = tuple(_BEE_ART.split("\n"))
+
+# Bee silhouette only: skip top/bottom frame bars (indices 0-2, 33+) and the
+# CKXX letter band (33-39). Index 32 is the tail stub with the wide center gap.
+_BEE_FIRST = 3
+_BEE_LAST = 32
+
+
+def _crop_to_content(lines: list[str]) -> tuple[str, ...]:
+    """Trim empty side margins so the bee fills the terminal width."""
+    positions = [i for ln in lines for i, ch in enumerate(ln) if ch == BLOCK]
+    if not positions:
+        return tuple(lines)
+    left = max(0, min(positions) - 1)
+    right = max(positions) + 2
+    return tuple(ln[left:right].rstrip() for ln in lines)
+
+
+def _bee_lines() -> tuple[str, ...]:
+    raw = [
+        ln
+        for i, ln in enumerate(_ALL_LINES)
+        if _BEE_FIRST <= i <= _BEE_LAST and ln.strip()
+    ]
+    return _crop_to_content(raw)
+
+
+BANNER_LINES: tuple[str, ...] = _bee_lines()
 BANNER_WIDTH = max(len(line) for line in BANNER_LINES) if BANNER_LINES else 0
 
 
 def banner_markup() -> str:
-    """Rich/Textual markup: gold block bee on black."""
-    out: list[str] = []
+    """Readable title + full-fidelity bee (scrolls if the terminal is short)."""
+    parts: list[str] = [TITLE, SUBTITLE, ""]
     for raw in BANNER_LINES:
-        if raw.strip():
-            out.append(f"[#ffd400]{raw}[/]")
-        else:
-            out.append("")
-    return "\n".join(out)
+        parts.append(f"[#ffd400]{raw}[/]")
+    return "\n".join(parts)
 
 
-BANNER = _BEE_ART
+BANNER = "\n".join([TITLE, SUBTITLE, "", *BANNER_LINES])

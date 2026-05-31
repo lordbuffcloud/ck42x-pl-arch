@@ -30,7 +30,7 @@ class MainMenuScreen(Screen):
     ]
 
     MENU = [
-        ("forge", ">  Forge Mission Payload", "Build .txt + host scripts for Flipper labs"),
+        ("forge", ">  Create Payload", "Build .txt + host scripts for Flipper labs"),
         ("library", ">  Mission Library", "Open output folder & recent bundles"),
         ("settings", ">  Settings", "DeepSeek API key - output path - model"),
         ("install", ">  Install Command", "One-liner for teammates / ck42x.com"),
@@ -100,7 +100,7 @@ class ForgeScreen(Screen):
         self.settings = settings
 
     def compose(self) -> ComposeResult:
-        yield Static("[bold #ffd400]Forge Mission Payload[/]", id="main-header")
+        yield Static("[bold #ffd400]Create Payload[/]", id="main-header")
         yield Label("Mission title")
         yield Input(placeholder="e.g. repo-health-check", id="title")
         yield Label("Mission goal (what should the host agent accomplish?)")
@@ -257,7 +257,7 @@ class LibraryScreen(Screen):
         log.write(f"[#ffd400]Output root:[/] {root}\n")
         missions = sorted([p for p in root.iterdir() if p.is_dir()])
         if not missions:
-            log.write("[dim]No missions yet. Use Forge Mission Payload.[/]")
+            log.write("[dim]No missions yet. Use Create Payload.[/]")
             return
         for m in missions:
             manifest = m / "manifest.json"
