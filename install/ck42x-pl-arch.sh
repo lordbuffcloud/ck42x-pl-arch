@@ -3,7 +3,7 @@
 # Usage: curl -fsSL https://www.ck42x.com/install/ck42x-pl-arch.sh | bash
 set -euo pipefail
 
-CK42X_PL_ARCH_VERSION="${CK42X_PL_ARCH_VERSION:-0.1.0}"
+CK42X_PL_ARCH_VERSION="${CK42X_PL_ARCH_VERSION:-0.1.13}"
 INSTALL_ROOT="${CK42X_PL_ARCH_HOME:-${HOME}/.local/share/ck42x-pl-arch}"
 BIN_DIR="${HOME}/.local/bin"
 SRC_TARBALL="${CK42X_PL_ARCH_URL:-https://www.ck42x.com/downloads/ck42x-pl-arch/ck42x-pl-arch-${CK42X_PL_ARCH_VERSION}.tar.gz}"

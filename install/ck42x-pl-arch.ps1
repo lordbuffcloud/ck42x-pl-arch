@@ -2,7 +2,7 @@
 # Usage: irm https://www.ck42x.com/install/ck42x-pl-arch.ps1 | iex
 $ErrorActionPreference = 'Stop'
 
-$Version = if ($env:CK42X_PL_ARCH_VERSION) { $env:CK42X_PL_ARCH_VERSION } else { '0.1.0' }
+$Version = if ($env:CK42X_PL_ARCH_VERSION) { $env:CK42X_PL_ARCH_VERSION } else { '0.1.13' }
 $InstallRoot = if ($env:CK42X_PL_ARCH_HOME) { $env:CK42X_PL_ARCH_HOME } else { Join-Path $env:LOCALAPPDATA 'CK42X\ck42x-pl-arch' }
 $BinDir = Join-Path $env:USERPROFILE '.local\bin'
 $Tarball = if ($env:CK42X_PL_ARCH_URL) { $env:CK42X_PL_ARCH_URL } else { "https://www.ck42x.com/downloads/ck42x-pl-arch/ck42x-pl-arch-$Version.tar.gz" }
